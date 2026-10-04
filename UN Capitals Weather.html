@@ -1,0 +1,59 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>UN Capitals Weather</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#f6f8fb;--fg:#17202a;--card:#fff;--line:#dde3ea;--acc:#1f6feb;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#10151c;--fg:#e6edf3;--card:#18202a;--line:#2c3744;--acc:#58a6ff}}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px system-ui,Arial,sans-serif;padding:16px}
+h1{margin:0 0 4px;font-size:20px}p{margin:0 0 12px;opacity:.7;font-size:12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+select,input,button{font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg)}
+button{cursor:pointer}button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.w{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:720px}
+th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--line)}
+th{position:sticky;top:0;background:var(--card);cursor:pointer;white-space:nowrap}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+</style></head><body>
+<h1>🌍 Capitals of UN Member States – Weather Matrix</h1>
+<div id="clock" style="display:flex;flex-wrap:wrap;gap:8px 20px;margin:0 0 10px;font-weight:600"></div>
+<p>Typical early-October conditions per capital (climatological estimates, not a live forecast). Rain = typical daily mm.</p>
+<div class="bar">
+<input id="q" placeholder="Search capital or country">
+<select id="k"></select>
+<button id="asc">▲ Ascending</button><button id="desc">▼ Descending</button>
+</div>
+<div class="w"><table><thead><tr id="h"></tr></thead><tbody id="b"></tbody></table></div>
+<div class="bar" style="margin-top:12px"><button id="csv">⬇ Download CSV</button><button id="xml">⬇ Download XML</button><span id="msg" style="align-self:center;opacity:.7;font-size:12px"></span></div>
+<script>
+const D=`Kabul,Afghanistan,6,22,0,3,8;Tirana,Albania,12,22,4,45,10;Algiers,Algeria,16,25,3,35,13;Andorra la Vella,Andorra,6,16,3,40,8;Luanda,Angola,22,28,0,10,14;Saint John's,Antigua and Barbuda,25,31,4,55,18;Buenos Aires,Argentina,13,22,3,40,16;Yerevan,Armenia,8,20,1,15,9;Canberra,Australia,5,19,2,35,15;Vienna,Austria,7,15,2,35,12;Baku,Azerbaijan,13,21,2,25,18;Nassau,Bahamas,24,30,5,50,17;Manama,Bahrain,25,35,0,1,15;Dhaka,Bangladesh,24,32,5,40,9;Bridgetown,Barbados,25,31,5,55,17;Minsk,Belarus,3,10,2,45,13;Brussels,Belgium,8,14,3,50,15;Belmopan,Belize,21,31,8,65,8;Porto-Novo,Benin,24,30,4,50,12;Thimphu,Bhutan,8,19,1,15,7;Sucre,Bolivia,6,20,2,25,10;Sarajevo,Bosnia and Herzegovina,5,15,3,40,8;Gaborone,Botswana,14,30,1,15,14;Brasília,Brazil,17,30,4,40,10;Bandar Seri Begawan,Brunei,24,32,9,70,8;Sofia,Bulgaria,5,15,1,30,10;Ouagadougou,Burkina Faso,23,34,1,20,10;Gitega,Burundi,14,26,5,50,9;Praia,Cabo Verde,24,30,1,10,18;Phnom Penh,Cambodia,24,31,8,70,9;Yaoundé,Cameroon,19,28,8,75,6;Ottawa,Canada,3,12,2,40,14;Bangui,Central African Republic,21,31,6,65,6;N'Djamena,Chad,22,35,1,15,10;Santiago,Chile,8,21,1,10,12;Beijing,China,7,19,1,15,12;Bogotá,Colombia,9,19,4,70,9;Moroni,Comoros,22,29,3,40,14;Brazzaville,Congo,21,31,5,55,8;Kinshasa,DR Congo,21,31,5,60,8;San José,Costa Rica,17,26,9,80,8;Yamoussoukro,Côte d'Ivoire,22,31,3,55,7;Zagreb,Croatia,8,16,3,40,10;Havana,Cuba,22,30,4,55,14;Nicosia,Cyprus,17,31,1,10,13;Prague,Czechia,6,14,1,35,11;Copenhagen,Denmark,8,13,2,50,17;Djibouti,Djibouti,26,34,0,5,15;Roseau,Dominica,24,31,6,60,16;Santo Domingo,Dominican Republic,23,31,4,55,13;Quito,Ecuador,9,20,3,55,10;Cairo,Egypt,21,30,0,2,14;San Salvador,El Salvador,19,30,8,70,9;Malabo,Equatorial Guinea,22,28,7,75,8;Asmara,Eritrea,10,24,1,15,10;Tallinn,Estonia,4,9,2,50,16;Mbabane,Eswatini,11,23,4,45,9;Addis Ababa,Ethiopia,9,22,1,15,9;Suva,Fiji,21,28,5,60,15;Helsinki,Finland,3,9,2,50,15;Paris,France,9,16,2,45,15;Libreville,Gabon,22,29,6,70,9;Banjul,Gambia,24,33,2,25,11;Tbilisi,Georgia,9,19,2,30,9;Berlin,Germany,6,14,1,40,14;Accra,Ghana,24,30,3,50,13;Athens,Greece,15,24,2,20,14;Saint George's,Grenada,25,31,6,60,17;Guatemala City,Guatemala,14,24,6,70,10;Conakry,Guinea,23,31,6,65,10;Bissau,Guinea-Bissau,23,32,4,50,10;Georgetown,Guyana,24,31,3,50,14;Port-au-Prince,Haiti,23,33,4,50,10;Tegucigalpa,Honduras,17,27,5,65,8;Budapest,Hungary,7,15,2,35,12;Reykjavik,Iceland,3,7,3,60,22;New Delhi,India,18,33,0,5,8;Jakarta,Indonesia,25,33,4,50,10;Tehran,Iran,14,24,1,10,9;Baghdad,Iraq,16,34,0,3,10;Dublin,Ireland,7,13,3,55,18;Jerusalem,Israel,15,25,1,10,12;Rome,Italy,12,21,4,40,10;Kingston,Jamaica,24,31,5,60,15;Tokyo,Japan,14,22,5,45,12;Amman,Jordan,15,27,1,8,14;Astana,Kazakhstan,0,10,1,25,15;Nairobi,Kenya,13,25,2,35,12;Tarawa,Kiribati,26,31,5,60,20;Kuwait City,Kuwait,22,36,0,2,16;Bishkek,Kyrgyzstan,3,17,1,20,8;Vientiane,Laos,22,31,3,50,8;Riga,Latvia,3,9,2,50,15;Beirut,Lebanon,20,27,2,20,13;Maseru,Lesotho,8,23,3,40,13;Monrovia,Liberia,23,29,12,80,10;Tripoli,Libya,20,28,1,15,14;Vaduz,Liechtenstein,5,14,4,45,8;Vilnius,Lithuania,3,9,2,50,13;Luxembourg,Luxembourg,6,13,2,50,14;Antananarivo,Madagascar,12,24,2,30,11;Lilongwe,Malawi,15,29,1,15,10;Kuala Lumpur,Malaysia,24,33,8,70,7;Malé,Maldives,26,31,6,60,15;Bamako,Mali,22,34,2,30,9;Valletta,Malta,19,25,3,35,16;Majuro,Marshall Islands,26,31,8,70,19;Nouakchott,Mauritania,24,34,0,5,18;Port Louis,Mauritius,19,26,1,25,18;Mexico City,Mexico,11,23,3,60,9;Palikir,Micronesia,24,30,12,85,12;Chișinău,Moldova,6,16,1,30,12;Monaco,Monaco,15,21,5,40,11;Ulaanbaatar,Mongolia,-6,6,0,10,14;Podgorica,Montenegro,10,21,8,45,9;Rabat,Morocco,15,24,2,30,14;Maputo,Mozambique,18,28,2,30,15;Naypyidaw,Myanmar,21,32,3,55,7;Windhoek,Namibia,13,29,1,10,13;Yaren,Nauru,26,31,4,55,18;Kathmandu,Nepal,13,26,1,15,6;Amsterdam,Netherlands,9,15,3,55,17;Wellington,New Zealand,9,15,3,55,26;Managua,Nicaragua,22,32,6,70,9;Niamey,Niger,23,36,0,10,10;Abuja,Nigeria,21,31,3,50,8;Pyongyang,North Korea,6,18,1,20,10;Skopje,North Macedonia,6,19,2,35,9;Oslo,Norway,4,9,3,55,13;Muscat,Oman,26,34,0,2,13;Islamabad,Pakistan,15,30,0,5,9;Ngerulmud,Palau,25,30,8,75,14;Panama City,Panama,24,31,9,80,10;Port Moresby,Papua New Guinea,23,31,2,35,15;Asunción,Paraguay,18,29,3,45,13;Lima,Peru,15,20,0,10,14;Manila,Philippines,25,32,6,65,12;Warsaw,Poland,5,12,1,40,14;Lisbon,Portugal,14,22,3,40,14;Doha,Qatar,25,36,0,1,16;Bucharest,Romania,7,17,1,30,11;Moscow,Russia,3,9,2,50,14;Kigali,Rwanda,14,26,3,45,8;Basseterre,Saint Kitts and Nevis,25,31,4,55,18;Castries,Saint Lucia,25,31,6,60,18;Kingstown,St Vincent and the Grenadines,25,31,6,60,18;Apia,Samoa,24,30,4,55,16;San Marino,San Marino,9,18,3,40,11;São Tomé,São Tomé and Príncipe,22,29,3,55,12;Riyadh,Saudi Arabia,21,36,0,2,13;Dakar,Senegal,24,31,2,25,15;Belgrade,Serbia,8,17,2,35,10;Victoria,Seychelles,25,30,5,50,15;Freetown,Sierra Leone,23,30,10,80,9;Singapore,Singapore,25,32,6,65,10;Bratislava,Slovakia,6,14,1,35,11;Ljubljana,Slovenia,6,15,3,40,8;Honiara,Solomon Islands,24,31,3,50,12;Mogadishu,Somalia,25,31,1,15,21;Pretoria,South Africa,11,26,3,40,12;Seoul,South Korea,10,21,1,20,11;Juba,South Sudan,21,33,4,55,8;Madrid,Spain,10,20,2,30,12;Colombo,Sri Lanka,25,31,12,75,13;Khartoum,Sudan,24,37,0,5,13;Paramaribo,Suriname,23,32,3,40,14;Stockholm,Sweden,4,10,2,50,14;Bern,Switzerland,5,13,3,45,10;Damascus,Syria,12,28,1,10,11;Dushanbe,Tajikistan,6,22,1,10,8;Dodoma,Tanzania,16,31,0,10,12;Bangkok,Thailand,25,33,8,65,9;Dili,Timor-Leste,24,33,1,25,12;Lomé,Togo,24,30,4,50,13;Nukuʻalofa,Tonga,19,25,3,45,17;Port of Spain,Trinidad and Tobago,24,32,6,60,14;Tunis,Tunisia,17,25,3,40,14;Ankara,Türkiye,6,18,1,25,11;Ashgabat,Turkmenistan,10,25,0,5,10;Funafuti,Tuvalu,26,31,10,75,17;Kampala,Uganda,17,27,4,55,9;Kyiv,Ukraine,5,13,2,45,12;Abu Dhabi,United Arab Emirates,25,36,0,1,14;London,United Kingdom,9,15,2,50,15;Washington D.C.,United States,10,20,2,35,11;Montevideo,Uruguay,11,19,3,45,19;Tashkent,Uzbekistan,7,21,1,15,8;Port Vila,Vanuatu,21,27,4,50,15;Caracas,Venezuela,18,27,4,60,8;Hanoi,Vietnam,22,29,3,50,10;Sana'a,Yemen,11,25,0,10,10;Lusaka,Zambia,15,31,0,8,11;Harare,Zimbabwe,13,28,1,15,10`;
+const desc=r=>r.p>=60?"🌧️ Rainy":r.p>=40?"🌦️ Showers":r.p>=25?"⛅ Cloudy":r.mx>=34?"☀️ Hot & sunny":r.mx<=8?"❄️ Cold":"☀️ Sunny";
+const R=D.split(";").map(s=>{const a=s.split(",");return{c:a[0],n:a[1],mn:+a[2],mx:+a[3],r:+a[4],p:+a[5],w:+a[6]}});
+R.forEach(r=>r.d=desc(r));
+const cols=[["c","Capital"],["n","Country"],["mn","Min °C"],["mx","Max °C"],["r","Rain mm"],["p","Rain %"],["w","Wind km/h"],["d","Description"]];
+let key="c",dir=1;
+const k=document.getElementById("k"),h=document.getElementById("h"),b=document.getElementById("b"),q=document.getElementById("q");
+cols.forEach(([f,l])=>{k.add(new Option("Sort by: "+l,f));const t=document.createElement("th");t.textContent=l;t.onclick=()=>{key=f;k.value=f;draw()};h.appendChild(t)});
+function draw(){
+document.getElementById("asc").className=dir>0?"on":"";document.getElementById("desc").className=dir<0?"on":"";
+const s=q.value.toLowerCase();
+const L=R.filter(r=>(r.c+r.n).toLowerCase().includes(s)).sort((a,b)=>(typeof a[key]=="number"?a[key]-b[key]:a[key].localeCompare(b[key]))*dir);
+b.innerHTML=L.map(r=>`<tr><td>${r.c}</td><td>${r.n}</td><td class=n>${r.mn}</td><td class=n>${r.mx}</td><td class=n>${r.r}</td><td class=n>${r.p}%</td><td class=n>${r.w}</td><td>${r.d}</td></tr>`).join("")}
+k.onchange=()=>{key=k.value;draw()};q.oninput=draw;
+document.getElementById("asc").onclick=()=>{dir=1;draw()};
+document.getElementById("desc").onclick=()=>{dir=-1;draw()};
+draw();
+function tick(){const n=new Date();
+const f=(tz,o)=>new Intl.DateTimeFormat("en-GB",Object.assign({timeZone:tz},o)).format(n);
+document.getElementById("clock").innerHTML="<span>🇬🇧 London: "+f("Europe/London",{weekday:"long",day:"numeric",month:"long",year:"numeric"})+" · "+f("Europe/London",{timeStyle:"medium"})+"</span><span>🕒 UTC: "+f("UTC",{timeStyle:"medium"})+"</span>"}
+tick();setInterval(tick,1000);
+const cur=()=>{const s=q.value.toLowerCase();return R.filter(r=>(r.c+r.n).toLowerCase().includes(s)).sort((a,b)=>(typeof a[key]=="number"?a[key]-b[key]:a[key].localeCompare(b[key]))*dir)};
+const plain=d=>d.replace(/^\S+\s/,"");
+const esc=t=>t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+async function save(name,data){const m=document.getElementById("msg");try{const dl=await claude.use("downloads");if(!dl){m.textContent="Downloads are not available in this view.";return}await dl.save({filename:name,data});m.textContent=""}catch(e){m.textContent=e&&e.code=="declined"?"":"Download unavailable."}}
+document.getElementById("csv").onclick=()=>{const q2=v=>'"'+String(v).replace(/"/g,'""')+'"';
+const n=new Date(),ld=new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/London",year:"numeric",month:"2-digit",day:"2-digit"}).format(n),ut=new Intl.DateTimeFormat("en-GB",{timeZone:"UTC",hour12:false,timeStyle:"medium"}).format(n);
+const rows=[["Capital","Country","Min C","Max C","Rain mm","Rain %","Wind km/h","Description","London Date","UTC Time"].join(",")].concat(cur().map(r=>[q2(r.c),q2(r.n),r.mn,r.mx,r.r,r.p,r.w,q2(plain(r.d)),ld,ut].join(",")));
+save("capitals-weather.csv","\ufeff"+rows.join("\n"))};
+document.getElementById("xml").onclick=()=>{const x='<?xml version="1.0" encoding="UTF-8"?>\n<capitals>\n'+cur().map(r=>`  <capital name="${esc(r.c)}" country="${esc(r.n)}"><min_c>${r.mn}</min_c><max_c>${r.mx}</max_c><rain_mm>${r.r}</rain_mm><rain_pct>${r.p}</rain_pct><wind_kmh>${r.w}</wind_kmh><description>${esc(plain(r.d))}</description></capital>`).join("\n")+"\n</capitals>";
+save("capitals-weather-xml.txt",x)};
+</script></body></html>
